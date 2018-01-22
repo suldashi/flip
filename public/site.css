@@ -1,6 +1,10 @@
 .board-container {
 	display:flex;
-	flex-d
+	flex-direction: column;
+}
+.board-row {
+	display: flex;
+	flex-direction: row;
 }
 .board-slot {
 	width:50px;
