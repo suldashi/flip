@@ -29594,8 +29594,11 @@ var ChannelComponent = exports.ChannelComponent = function (_React$Component) {
         _this.Board = _this.Board.bind(_this);
         _this.BoardRow = _this.BoardRow.bind(_this);
         _this.BoardSlot = _this.BoardSlot.bind(_this);
-        _this.HorizontalFlipper = _this.HorizontalFlipper.bind(_this);
         _this.VerticalFlipper = _this.VerticalFlipper.bind(_this);
+        _this.VerticalFlipperTile = _this.VerticalFlipperTile.bind(_this);
+        _this.HorizontalFlipperTile = _this.HorizontalFlipperTile.bind(_this);
+        _this.flipRow = _this.flipRow.bind(_this);
+        _this.flipCol = _this.flipCol.bind(_this);
         _this.socket = props.socket;
         _this.state = {
             channelStatus: ChannelStatuses.connecting,
@@ -29626,9 +29629,15 @@ var ChannelComponent = exports.ChannelComponent = function (_React$Component) {
         value: function Board() {
             var _this3 = this;
 
-            return this.state.board.map(function (el, index) {
-                return _react2.default.createElement(_this3.BoardRow, { key: index, index: index });
-            });
+            return _react2.default.createElement(
+                "div",
+                null,
+                _react2.default.createElement(this.VerticalFlipper, null),
+                this.state.board.map(function (el, index) {
+                    return _react2.default.createElement(_this3.BoardRow, { key: index, index: index });
+                }),
+                _react2.default.createElement(this.VerticalFlipper, null)
+            );
         }
     }, {
         key: "BoardRow",
@@ -29638,9 +29647,11 @@ var ChannelComponent = exports.ChannelComponent = function (_React$Component) {
             return _react2.default.createElement(
                 "div",
                 { className: "board-row" },
+                _react2.default.createElement(this.HorizontalFlipperTile, { coord: params.index }),
                 this.state.board[params.index].map(function (el, index) {
                     return _react2.default.createElement(_this4.BoardSlot, { row: params.index, col: index, key: index });
-                })
+                }),
+                _react2.default.createElement(this.HorizontalFlipperTile, { coord: params.index })
             );
         }
     }, {
@@ -29650,11 +29661,73 @@ var ChannelComponent = exports.ChannelComponent = function (_React$Component) {
             return _react2.default.createElement("div", { className: "board-slot " + slotState });
         }
     }, {
-        key: "HorizontalFlipper",
-        value: function HorizontalFlipper() {}
+        key: "VerticalFlipperTile",
+        value: function VerticalFlipperTile(params) {
+            var _this5 = this;
+
+            return _react2.default.createElement(
+                "div",
+                { onClick: function onClick() {
+                        return _this5.flipCol(params.coord);
+                    }, className: "board-slot" },
+                params.coord
+            );
+        }
     }, {
         key: "VerticalFlipper",
-        value: function VerticalFlipper() {}
+        value: function VerticalFlipper() {
+            return _react2.default.createElement(
+                "div",
+                { className: "board-row" },
+                _react2.default.createElement("div", { className: "board-slot" }),
+                _react2.default.createElement(this.VerticalFlipperTile, { coord: 0 }),
+                _react2.default.createElement(this.VerticalFlipperTile, { coord: 1 }),
+                _react2.default.createElement(this.VerticalFlipperTile, { coord: 2 }),
+                _react2.default.createElement(this.VerticalFlipperTile, { coord: 3 }),
+                _react2.default.createElement(this.VerticalFlipperTile, { coord: 4 }),
+                _react2.default.createElement(this.VerticalFlipperTile, { coord: 5 }),
+                _react2.default.createElement("div", { className: "board-slot" })
+            );
+        }
+    }, {
+        key: "HorizontalFlipperTile",
+        value: function HorizontalFlipperTile(params) {
+            var _this6 = this;
+
+            return _react2.default.createElement(
+                "div",
+                { onClick: function onClick() {
+                        return _this6.flipRow(params.coord);
+                    }, className: "board-slot" },
+                params.coord
+            );
+        }
+    }, {
+        key: "flipCol",
+        value: function flipCol(col) {
+            var currentBoard = this.state.board.map(function (e) {
+                return e.slice();
+            });
+            for (var i in currentBoard[col]) {
+                currentBoard[i][col] = currentBoard[i][col] === 0 ? 1 : 0;
+            }
+            this.setState({
+                board: currentBoard
+            });
+        }
+    }, {
+        key: "flipRow",
+        value: function flipRow(row) {
+            var currentBoard = this.state.board.map(function (e) {
+                return e.slice();
+            });
+            for (var i in currentBoard[row]) {
+                currentBoard[row][i] = currentBoard[row][i] === 0 ? 1 : 0;
+            }
+            this.setState({
+                board: currentBoard
+            });
+        }
     }, {
         key: "render",
         value: function render() {
